@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FAH Studio — Roongfah AI Muse</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:        #09080A;
+      --surface:   #131115;
+      --surface2:  #1C1A1F;
+      --border:    #2A2730;
+      --rose:      #C8967A;
+      --rose-lt:   #DDB09A;
+      --sage:      #8FA882;
+      --text:      #EDE8E2;
+      --text2:     #7A7080;
+      --text3:     #3D3845;
+      --red:       #C46060;
+    }
+
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* ─── SIDEBAR ─── */
+    .sidebar {
+      width: 220px;
+      min-height: 100vh;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      z-index: 200;
+    }
+    .sb-logo {
+      padding: 26px 22px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sb-logo .wordmark {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 24px;
+      font-style: italic;
+      color: var(--rose);
+      letter-spacing: 1px;
+    }
+    .sb-logo .sub {
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--text2);
+      margin-top: 3px;
+    }
+    .sb-nav { flex: 1; padding: 12px 0; }
+    .nav-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 22px;
+      background: none;
+      border: none;
+      border-left: 3px solid transparent;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text2);
+      text-align: left;
+      transition: all .15s;
+    }
+    .nav-btn:hover { color: var(--text); background: var(--surface2); }
+    .nav-btn.active { color: var(--rose); border-left-color: var(--rose); background: rgba(200,150,122,.07); }
+    .nav-btn .ni { font-size: 16px; width: 20px; text-align: center; }
+    .sb-foot {
+      padding: 16px 22px;
+      border-top: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--text3);
+    }
+
+    /* ─── MAIN ─── */
+    .main {
+      margin-left: 220px;
+      flex: 1;
+      padding: 36px 32px 48px;
+      max-width: calc(100vw - 220px);
+    }
+
+    /* ─── SECTIONS ─── */
+    .sec { display: none; }
+    .sec.active { display: block; }
+
+    .ph { margin-bottom: 28px; }
+    .ph h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 30px;
+      font-weight: 300;
+      font-style: italic;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .ph p { font-size: 13px; color: var(--text2); line-height: 1.65; }
+
+    /* ─── CARD ─── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px 24px;
+      margin-bottom: 18px;
+    }
+    .ct { /* card title */
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--rose);
+      font-weight: 600;
+      margin-bottom: 18px;
+    }
+
+    /* ─── TYPE GRID ─── */
+    .type-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 4px;
+    }
+    .tc {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 10px;
+      cursor: pointer;
+      text-align: center;
+      transition: all .15s;
+    }
+    .tc:hover { border-color: var(--rose); background: rgba(200,150,122,.05); }
+    .tc.sel { border-color: var(--rose); background: rgba(200,150,122,.1); }
+    .tc .ti { font-size: 22px; margin-bottom: 7px; }
+    .tc .tn { font-size: 11px; color: var(--text2); font-weight: 500; line-height: 1.3; }
+    .tc.sel .tn { color: var(--rose); }
+
+    /* ─── FORM ─── */
+    .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .fg { margin-bottom: 16px; }
+    label {
+      display: block;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text2);
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    input, select, textarea {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      outline: none;
+      transition: border-color .15s;
+      -webkit-appearance: none;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--rose); }
+    textarea { resize: vertical; min-height: 78px; line-height: 1.6; }
+    select option { background: #1C1A1F; }
+
+    /* ─── BUTTONS ─── */
+    .btn {
+      padding: 11px 22px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all .15s;
+    }
+    .btn-p {
+      background: var(--rose);
+      color: #fff;
+      width: 100%;
+      padding: 14px;
+      font-size: 14px;
+      letter-spacing: .3px;
+    }
+    .btn-p:hover:not(:disabled) { background: var(--rose-lt); }
+    .btn-p:disabled { opacity: .45; cursor: not-allowed; }
+    .btn-s {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text2);
+    }
+    .btn-s:hover { border-color: var(--rose); color: var(--rose); }
+
+    /* ─── OUTPUT ─── */
+    .out-box {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      min-height: 110px;
+    }
+    .out-ph {
+      font-size: 13px;
+      color: var(--text3);
+      text-align: center;
+      padding: 28px 0;
+      font-style: italic;
+    }
+    .out-txt {
+      font-size: 14px;
+      line-height: 1.85;
+      color: var(--text);
+      white-space: pre-wrap;
+    }
+    .out-acts { display: flex; gap: 10px; margin-top: 14px; }
+
+    /* ─── LOADING ─── */
+    .loading {
+      display: flex; align-items: center; gap: 12px;
+      color: var(--rose); font-size: 13px; padding: 22px 0;
+    }
+    .dots { display: flex; gap: 5px; }
+    .dots span {
+      width: 7px; height: 7px;
+      background: var(--rose); border-radius: 50%;
+      animation: dp 1.2s infinite;
+    }
+    .dots span:nth-child(2) { animation-delay: .2s; }
+    .dots span:nth-child(3) { animation-delay: .4s; }
+    @keyframes dp {
+      0%,60%,100% { opacity:.2; transform:scale(.8); }
+      30%          { opacity:1;  transform:scale(1);  }
+    }
+
+    /* ─── BIBLE ─── */
+    .profile-hero {
+      background: linear-gradient(135deg, #1C1A1F 0%, #231E2A 100%);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px 28px 24px;
+      margin-bottom: 18px;
+      display: flex; gap: 24px; align-items: flex-start;
+    }
+    .av {
+      width: 80px; height: 80px; border-radius: 50%;
+      background: linear-gradient(135deg, #C8967A, #8FA882);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 34px; flex-shrink: 0;
+      box-shadow: 0 0 0 3px #2A2730, 0 0 0 5px rgba(200,150,122,.25);
+    }
+    .pn {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px; font-style: italic;
+      color: var(--rose); margin-bottom: 5px;
+    }
+    .pt { font-size: 13px; color: var(--text2); line-height: 1.6; margin-bottom: 14px; }
+    .tags { display: flex; flex-wrap: wrap; gap: 7px; }
+    .tag {
+      font-size: 10px; padding: 3px 10px; border-radius: 20px;
+      border: 1px solid var(--border); color: var(--text2);
+      letter-spacing: 1px; text-transform: uppercase;
+    }
+    .trait-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+    .trc {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 14px;
+    }
+    .tri { font-size: 20px; margin-bottom: 8px; }
+    .trl {
+      font-size: 10px; letter-spacing: 2px; color: var(--rose);
+      text-transform: uppercase; font-weight: 600; margin-bottom: 5px;
+    }
+    .trv { font-size: 12px; color: var(--text2); line-height: 1.55; }
+    table { width: 100%; border-collapse: collapse; }
+    th {
+      text-align: left; font-size: 10px; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--text2); font-weight: 600;
+      padding: 8px 12px; border-bottom: 1px solid var(--border);
+    }
+    td {
+      padding: 11px 12px; font-size: 13px;
+      border-bottom: 1px solid var(--border);
+      line-height: 1.55; vertical-align: top;
+    }
+    td:first-child { color: var(--sage); }
+    td:last-child  { color: var(--red);  }
+
+    /* ─── CALENDAR ─── */
+    .week-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+    }
+    .day-col {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 9px;
+      min-height: 150px;
+    }
+    .dn {
+      font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--rose); font-weight: 700;
+      margin-bottom: 10px; text-align: center;
+    }
+    .ds {
+      background: var(--surface); border: 1px dashed var(--border);
+      border-radius: 6px; padding: 8px; margin-bottom: 6px;
+      font-size: 10px; color: var(--text2); line-height: 1.5;
+    }
+    .strategy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .sg {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 14px;
+    }
+    .sgl {
+      font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+      font-weight: 600; margin-bottom: 8px;
+    }
+    .sgt { font-size: 12px; color: var(--text2); line-height: 1.65; }
+
+    /* ─── SETTINGS ─── */
+    .code-block {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 8px; padding: 14px 16px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px; color: var(--sage); line-height: 1.8;
+    }
+    .api-stat {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 12px; color: var(--text2); margin-top: 8px;
+    }
+    .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--text3); flex-shrink: 0;
+    }
+    .dot.ok { background: var(--sage); }
+
+    /* ─── SAMPLE POSTS ─── */
+    .post-ex {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 14px 16px; margin-bottom: 12px;
+    }
+    .pe-lbl {
+      font-size: 10px; color: var(--rose); letter-spacing: 2px;
+      font-weight: 600; text-transform: uppercase; margin-bottom: 8px;
+    }
+    .pe-txt { font-size: 13px; color: var(--text2); line-height: 1.8; }
+
+    /* ─── TOAST ─── */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: var(--sage); color: #fff;
+      padding: 12px 20px; border-radius: 8px;
+      font-size: 13px; font-weight: 500;
+      opacity: 0; transform: translateY(8px);
+      transition: all .3s; pointer-events: none; z-index: 999;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    /* ─── MOBILE NAV ─── */
+    .mob-nav { display: none; }
+
+    @media (max-width: 800px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; padding: 20px 16px 90px; max-width: 100vw; }
+      .type-grid { grid-template-columns: repeat(2, 1fr); }
+      .row2 { grid-template-columns: 1fr; }
+      .trait-grid { grid-template-columns: repeat(2, 1fr); }
+      .week-grid { grid-template-columns: repeat(2, 1fr); }
+      .strategy-grid { grid-template-columns: 1fr; }
+      .profile-hero { flex-direction: column; align-items: flex-start; }
+      .mob-nav {
+        display: flex;
+        position: fixed; bottom: 0; left: 0; right: 0;
+        background: var(--surface); border-top: 1px solid var(--border);
+        padding: 8px 0 18px; z-index: 200;
+      }
+      .mob-btn {
+        flex: 1; display: flex; flex-direction: column;
+        align-items: center; gap: 3px;
+        background: none; border: none; cursor: pointer;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 10px; color: var(--text2); padding: 4px 0;
+      }
+      .mob-btn.active { color: var(--rose); }
+      .mob-btn .mi { font-size: 18px; }
+    }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  </style>
+</head>
+<body>
+
+<!-- ──────── SIDEBAR ──────── -->
+<nav class="sidebar">
+  <div class="sb-logo">
+    <div class="wordmark">✿ Fah</div>
+    <div class="sub">Roongfah AI Muse</div>
+  </div>
+  <div class="sb-nav">
+    <button class="nav-btn active" onclick="nav('studio')"><span class="ni">✦</span>Content Studio</button>
+    <button class="nav-btn" onclick="nav('bible')"><span class="ni">◎</span>Character Bible</button>
+    <button class="nav-btn" onclick="nav('calendar')"><span class="ni">▦</span>Calendar</button>
+    <button class="nav-btn" onclick="nav('settings')"><span class="ni">⚙</span>Settings</button>
+  </div>
+  <div class="sb-foot">Roongfah · Internal Tool</div>
+</nav>
+
+<!-- ──────── MOBILE NAV ──────── -->
+<nav class="mob-nav">
+  <button class="mob-btn active" onclick="nav('studio')"><span class="mi">✦</span>Studio</button>
+  <button class="mob-btn" onclick="nav('bible')"><span class="mi">◎</span>Bible</button>
+  <button class="mob-btn" onclick="nav('calendar')"><span class="mi">▦</span>Calendar</button>
+  <button class="mob-btn" onclick="nav('settings')"><span class="mi">⚙</span>Settings</button>
+</nav>
+
+<!-- ──────── MAIN ──────── -->
+<main class="main">
+
+  <!-- ── STUDIO ── -->
+  <section id="studio" class="sec active">
+    <div class="ph">
+      <h1>Content Studio</h1>
+      <p>Generate captions, video scripts and carousel copy for Fah — in her authentic Thai voice.</p>
+    </div>
+
+    <div class="card">
+      <div class="ct">1 — Select Content Type</div>
+      <div class="type-grid" id="typeGrid">
+        <div class="tc sel" onclick="setType(this,'morning_routine')"><div class="ti">🌅</div><div class="tn">Morning Routine</div></div>
+        <div class="tc" onclick="setType(this,'product_demo')"><div class="ti">🧴</div><div class="tn">Product Demo</div></div>
+        <div class="tc" onclick="setType(this,'ingredient')"><div class="ti">🔬</div><div class="tn">Ingredient Spotlight</div></div>
+        <div class="tc" onclick="setType(this,'lifestyle')"><div class="ti">☕</div><div class="tn">Lifestyle Caption</div></div>
+        <div class="tc" onclick="setType(this,'before_after')"><div class="ti">✨</div><div class="tn">Before / After</div></div>
+        <div class="tc" onclick="setType(this,'thai_tip')"><div class="ti">🌿</div><div class="tn">Thai Beauty Tip</div></div>
+        <div class="tc" onclick="setType(this,'review')"><div class="ti">💬</div><div class="tn">Product Review</div></div>
+        <div class="tc" onclick="setType(this,'video_script')"><div class="ti">🎬</div><div class="tn">Video Script (HeyGen)</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ct">2 — Fill the Brief</div>
+      <div class="row2">
+        <div class="fg">
+          <label>Product Name</label>
+          <input type="text" id="f-product" placeholder="e.g. Vitamin C Brightening Serum">
+        </div>
+        <div class="fg">
+          <label>Key Message</label>
+          <input type="text" id="f-message" placeholder="e.g. Skin visibly glowing after 2 weeks">
+        </div>
+      </div>
+      <div class="row2">
+        <div class="fg">
+          <label>Language</label>
+          <select id="f-lang">
+            <option value="thai">Thai only</option>
+            <option value="english" selected>English only</option>
+            <option value="both">Thai + English (bilingual)</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Platform</label>
+          <select id="f-platform">
+            <option value="instagram">Instagram</option>
+            <option value="tiktok">TikTok</option>
+            <option value="both_platforms">Instagram + TikTok</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg">
+        <label>Extra Context (optional)</label>
+        <textarea id="f-extra" placeholder="e.g. She's been using it 2 weeks, dark spots lighter, skin feels softer in humidity..."></textarea>
+      </div>
+      <button class="btn btn-p" onclick="generate()" id="genBtn">✦ Generate Content for Fah</button>
+    </div>
+
+    <div class="card">
+      <div class="ct">3 — Fah's Content</div>
+      <div class="out-box" id="outBox">
+        <p class="out-ph">Fill the brief above and hit Generate ✦</p>
+      </div>
+      <div class="out-acts" id="outActs" style="display:none">
+        <button class="btn btn-s" onclick="copyOut()">⎘ Copy</button>
+        <button class="btn btn-s" onclick="generate()">↺ Regenerate</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── BIBLE ── -->
+  <section id="bible" class="sec">
+    <div class="ph">
+      <h1>Character Bible</h1>
+      <p>Who Fah is. The reference every team member reads before creating any content.</p>
+    </div>
+
+    <div class="profile-hero">
+      <div class="av">✿</div>
+      <div>
+        <div class="pn">Fah</div>
+        <div class="pt">28-year-old Bangkok woman. Health-conscious, skin-obsessed, quietly confident.<br>Not a model. Not a brand. A real-feeling person who genuinely uses Roongfah.</div>
+        <div class="tags">
+          <span class="tag">Bangkok</span>
+          <span class="tag">Age 28</span>
+          <span class="tag">Thai + English</span>
+          <span class="tag">Skin-obsessed</span>
+          <span class="tag">100% AI</span>
+          <span class="tag">Roongfah Muse</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ct">Core Traits</div>
+      <div class="trait-grid">
+        <div class="trc"><div class="tri">🌿</div><div class="trl">Personality</div><div class="trv">Warm, grounded, quietly confident. Not loud or "influencer-y."</div></div>
+        <div class="trc"><div class="tri">📍</div><div class="trl">Lifestyle</div><div class="trv">Lives in Bangkok. Works in creative / wellness. Loves quiet mornings and good coffee.</div></div>
+        <div class="trc"><div class="tri">💆</div><div class="trl">Skin Story</div><div class="trv">Had dull, uneven skin. Found real skincare. Roongfah is her ritual — not her deal.</div></div>
+        <div class="trc"><div class="tri">📱</div><div class="trl">Content Style</div><div class="trv">Aesthetic but not over-edited. Selfie-style video. Real-looking. No overly polished feel.</div></div>
+        <div class="trc"><div class="tri">💬</div><div class="trl">How She Talks</div><div class="trv">Soft, direct, honest. Casual Bangkok Thai. English: natural, not formal. Never salesy.</div></div>
+        <div class="trc"><div class="tri">🚫</div><div class="trl">What She's NOT</div><div class="trv">Not a model. Not a celebrity. Not a brand account. Not a corporate spokesperson.</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ct">Voice Guide — Do vs Don't</div>
+      <table>
+        <tr><th>✓ She Says This</th><th>✗ Never This</th></tr>
+        <tr>
+          <td>"ผิวฉันเริ่มกลับมามีชีวิตชีวาหลังใช้ serum ตัวนี้ได้ 2 อาทิตย์"</td>
+          <td>"This amazing product transformed my skin!" (too ad-like)</td>
+        </tr>
+        <tr>
+          <td>"I've tried a lot of serums. This one just... works differently."</td>
+          <td>"Introducing Roongfah's new Vitamin C serum!" (brand tone)</td>
+        </tr>
+        <tr>
+          <td>"Honestly didn't expect this to help with my dark spots but here we are"</td>
+          <td>"Buy now! Limited time! Link in bio!" (salesy)</td>
+        </tr>
+        <tr>
+          <td>"For anyone in Bangkok — humidity kills your skin in the AM. This helps."</td>
+          <td>"As a Roongfah partner I'm excited to share..." (corporate)</td>
+        </tr>
+        <tr>
+          <td>"Slow morning. My skin is doing the most right now and I'm here for it."</td>
+          <td>"Clinically proven! 98% of users saw results!" (claims)</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="ct">Sample Captions (Reference)</div>
+      <div class="post-ex">
+        <div class="pe-lbl">Morning Routine · Thai</div>
+        <div class="pe-txt">ตี 6 เช้า ยังไม่ได้กาแฟ แต่ผิวต้องได้ก่อน 🌿<br>ใช้ serum ตัวนี้มา 3 อาทิตย์แล้ว รู้สึกว่าผิวสว่างขึ้นจริงๆ ไม่ใช่แค่แสงนะ<br><br>#สกินแคร์ #roongfah #เช้าที่ดี #กรุงเทพ</div>
+      </div>
+      <div class="post-ex">
+        <div class="pe-lbl">Product Review · English</div>
+        <div class="pe-txt">I've used a lot of Vitamin C serums. Most of them sting or make my skin feel tight. This one does neither.<br><br>Two weeks in — the dark spot above my eyebrow is noticeably lighter. I'm not being dramatic.<br><br>@roongfah for anyone curious 🌿</div>
+      </div>
+      <div class="post-ex">
+        <div class="pe-lbl">Lifestyle Shot · Bilingual</div>
+        <div class="pe-txt">ผิวดีต้องเริ่มจากข้างใน แต่ข้างนอกก็ต้องดูแลด้วยนะ ☕<br>Good skin doesn't happen overnight. But this serum is making mornings a little more worth it.<br><br>#skincare #roongfah #bangkoklife</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CALENDAR ── -->
+  <section id="calendar" class="sec">
+    <div class="ph">
+      <h1>Content Calendar</h1>
+      <p>Fah's weekly posting rhythm — 5 posts per week, consistent and varied.</p>
+    </div>
+
+    <div class="card">
+      <div class="ct">Weekly Template</div>
+      <div class="week-grid">
+        <div class="day-col">
+          <div class="dn">Mon</div>
+          <div class="ds">🌅 Morning Routine<br>Reel · 30s · Thai</div>
+        </div>
+        <div class="day-col">
+          <div class="dn">Tue</div>
+          <div class="ds" style="border-style:solid; color:var(--text3); font-size:9px;">Rest Day</div>
+        </div>
+        <div class="day-col">
+          <div class="dn">Wed</div>
+          <div class="ds">🔬 Ingredient Post<br>Carousel · English</div>
+        </div>
+        <div class="day-col">
+          <div class="dn">Thu</div>
+          <div class="ds">☕ Lifestyle Shot<br>Static · Bilingual</div>
+        </div>
+        <div class="day-col">
+          <div class="dn">Fri</div>
+          <div class="ds">💬 Product Review<br>Reel · 45s · English</div>
+        </div>
+        <div class="day-col">
+          <div class="dn">Sat</div>
+          <div class="ds">🌿 Thai Beauty Tip<br>Story or Reel · Thai</div>
+        </div>
+        <div class="day-col">
+          <div class="dn">Sun</div>
+          <div class="ds" style="border-style:solid; color:var(--text3); font-size:9px;">Rest Day</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ct">Monthly Strategy</div>
+      <div class="strategy-grid">
+        <div class="sg"><div class="sgl" style="color:var(--rose);">Week 1–2 · Build Presence</div><div class="sgt">No brand mentions yet. Fah is just posting her routines and life. Building trust as a person first.</div></div>
+        <div class="sg"><div class="sgl" style="color:var(--sage);">Week 3–4 · First Mention</div><div class="sgt">First casual Roongfah tag. Natural, never forced. Audience starts to connect Fah with the brand.</div></div>
+        <div class="sg"><div class="sgl" style="color:var(--rose);">Month 2 · Deeper Review</div><div class="sgt">Before/after. Specific results. She becomes the face people associate with Roongfah's real effect.</div></div>
+        <div class="sg"><div class="sgl" style="color:var(--sage);">Month 3+ · Campaign Asset</div><div class="sgt">New launches go through her first. She's Roongfah's trusted voice for all product stories.</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ct">Production Workflow Per Post</div>
+      <table>
+        <tr><th>Step</th><th>Action</th><th>Tool</th><th>Time</th></tr>
+        <tr><td style="color:var(--rose);">1</td><td style="color:var(--text2);">Brief Claude → get script + caption</td><td style="color:var(--text2);">Studio tab (this tool)</td><td style="color:var(--text2);">10 min</td></tr>
+        <tr><td style="color:var(--rose);">2</td><td style="color:var(--text2);">Generate Fah's image for post</td><td style="color:var(--text2);">Midjourney</td><td style="color:var(--text2);">5 min</td></tr>
+        <tr><td style="color:var(--rose);">3</td><td style="color:var(--text2);">Create talking video with script</td><td style="color:var(--text2);">HeyGen</td><td style="color:var(--text2);">15 min</td></tr>
+        <tr><td style="color:var(--rose);">4</td><td style="color:var(--text2);">Edit video + add product cutaway</td><td style="color:var(--text2);">CapCut</td><td style="color:var(--text2);">15 min</td></tr>
+        <tr><td style="color:var(--rose);">5</td><td style="color:var(--text2);">Post + schedule + reply to comments</td><td style="color:var(--text2);">Instagram / TikTok</td><td style="color:var(--text2);">5 min</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- ── SETTINGS ── -->
+  <section id="settings" class="sec">
+    <div class="ph">
+      <h1>Settings</h1>
+      <p>API key and Vercel deployment configuration for the team.</p>
+    </div>
+
+    <div class="card">
+      <div class="ct">API Key (Fallback / Local Use)</div>
+      <div class="fg">
+        <label>Anthropic API Key</label>
+        <input type="password" id="apiInput" placeholder="sk-ant-api03-...">
+        <div class="api-stat">
+          <div class="dot" id="statusDot"></div>
+          <span id="statusTxt">No key — add one below or deploy to Vercel</span>
+        </div>
+      </div>
+      <button class="btn btn-p" onclick="saveKey()" style="max-width:180px; font-size:13px; padding:11px;">Save Key</button>
+      <p style="font-size:12px; color:var(--text3); margin-top:12px; line-height:1.6;">
+        Key is stored in your browser only (localStorage). For the whole team, use Vercel env variable instead (see below).
+      </p>
+    </div>
+
+    <div class="card">
+      <div class="ct">Vercel Team Deployment</div>
+      <p style="font-size:13px; color:var(--text2); line-height:1.8; margin-bottom:16px;">
+        To share this tool with your team without each person needing an API key, deploy via Vercel:
+      </p>
+      <div class="code-block">
+        1. Push this folder to GitHub<br>
+        2. Go to vercel.com → New Project → Import from GitHub<br>
+        3. Add Environment Variable:<br>
+        &nbsp;&nbsp;&nbsp;ANTHROPIC_API_KEY = sk-ant-...<br>
+        4. Deploy → share the URL with team<br><br>
+        The /api/generate.js function keeps the key server-side.
+      </div>
+      <p style="font-size:12px; color:var(--text3); margin-top:12px; line-height:1.6;">
+        Once deployed on Vercel, team members open the URL and generate content — no key needed on their end.
+      </p>
+    </div>
+
+    <div class="card">
+      <div class="ct">Tool Stack</div>
+      <table>
+        <tr><th>Tool</th><th>Role in Fah's System</th><th>Cost</th></tr>
+        <tr><td style="color:var(--rose);">Midjourney</td><td style="color:var(--text2);">Generate Fah's face + lifestyle images</td><td style="color:var(--text2);">You own it</td></tr>
+        <tr><td style="color:var(--rose);">ElevenLabs</td><td style="color:var(--text2);">Custom Thai + English voice</td><td style="color:var(--text2);">You own it</td></tr>
+        <tr><td style="color:var(--rose);">HeyGen</td><td style="color:var(--text2);">AI avatar video — talking demos</td><td style="color:var(--text2);">฿1,050–3,500/mo</td></tr>
+        <tr><td style="color:var(--rose);">CapCut</td><td style="color:var(--text2);">Edit video, subtitles, product cutaway</td><td style="color:var(--text2);">Free</td></tr>
+        <tr><td style="color:var(--rose);">FAH Studio</td><td style="color:var(--text2);">Scripts, captions, calendar (this tool)</td><td style="color:var(--text2);">Claude API</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="ct">About</div>
+      <p style="font-size:13px; color:var(--text2); line-height:1.8;">
+        <strong style="color:var(--text);">FAH Studio v1.0</strong> — Internal content tool for Roongfah's AI brand muse.<br>
+        Built for Roongfah team. Powered by Claude AI (claude-sonnet-4-6).<br>
+        <span style="color:var(--text3);">June 2026</span>
+      </p>
+    </div>
+  </section>
+
+</main>
+
+<!-- ──────── TOAST ──────── -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── NAVIGATION ──────────────────────────────
+function nav(id) {
+  document.querySelectorAll('.sec').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn, .mob-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll(`[onclick="nav('${id}')"]`).forEach(b => b.classList.add('active'));
+  window.scrollTo(0,0);
+}
+
+// ── CONTENT TYPE ────────────────────────────
+let activeType = 'morning_routine';
+function setType(el, type) {
+  document.querySelectorAll('.tc').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+  activeType = type;
+}
+
+// ── TYPE PROMPTS ────────────────────────────
+const typeDesc = {
+  morning_routine:  "morning routine reel — she's just woken up, doing her AM skincare ritual, authentic and warm",
+  product_demo:     "product demonstration — exactly how she applies it, what it feels like on skin, honest reactions",
+  ingredient:       "ingredient spotlight carousel — she explains why this ingredient matters in simple, relatable terms. No jargon.",
+  lifestyle:        "lifestyle photo caption — she's in her element (Bangkok café, home, weekend), product present but not the focus",
+  before_after:     "before and after post — she shares her genuine skin transformation, specific about what changed and how long it took",
+  thai_tip:         "Thai beauty tip — skincare insight specific to Bangkok life (humidity, pollution, heat, sun). Local knowledge.",
+  review:           "product review — she's finished testing it, honest verdict, specific about what she noticed and what to realistically expect",
+  video_script:     "HeyGen video script. Structure: [HOOK 5s], [PROBLEM SHE HAD], [PRODUCT DISCOVERY], [RESULTS], [CLOSE]. She speaks directly to camera. Conversational. 30–45 seconds when read aloud at natural pace."
+};
+
+const langInstr = {
+  thai:    "Write entirely in Thai. Casual, natural Bangkok Thai — not formal. How a 28-year-old Bangkok woman actually texts.",
+  english: "Write in English. Natural and conversational. Not formal. Like a Bangkok woman who speaks fluent English with a warm personality.",
+  both:    "Write in both languages. Thai caption first (natural, casual), then English below (natural translation, same tone). Both must sound authentic."
+};
+
+// ── GENERATE ────────────────────────────────
+async function generate() {
+  const product  = document.getElementById('f-product').value.trim()  || 'Roongfah serum';
+  const message  = document.getElementById('f-message').value.trim()  || 'glowing, healthy skin';
+  const lang     = document.getElementById('f-lang').value;
+  const platform = document.getElementById('f-platform').value;
+  const extra    = document.getElementById('f-extra').value.trim();
+  const apiKey   = localStorage.getItem('rf_api_key');
+
+  const btn = document.getElementById('genBtn');
+  const box = document.getElementById('outBox');
+  btn.disabled = true; btn.textContent = 'Generating…';
+  box.innerHTML = `<div class="loading"><div class="dots"><span></span><span></span><span></span></div>Fah is writing…</div>`;
+  document.getElementById('outActs').style.display = 'none';
+
+  const sys = `You are Fah — a 28-year-old Bangkok woman who is passionate about real skincare. You use Roongfah products genuinely; they are part of your daily life, not a paid promotion.
+
+Your voice:
+- Warm, direct, honest — like talking to a close friend
+- Casual Bangkok Thai or natural English (never stiff or corporate)
+- Real and specific — you mention exact details, textures, timelines
+- Soft but confident — you know your skin and what works for it
+- NEVER salesy, never "brand announcement" sounding
+
+You are NOT a model, celebrity, brand rep, or influencer doing a paid deal. You are just a person who found skincare that works and shares it naturally.
+
+Always write so it feels like a real human posted it.`;
+
+  const usr = `Create ${typeDesc[activeType]} for:
+
+Product: ${product}
+Key message / result: ${message}
+Platform: ${platform === 'both_platforms' ? 'Instagram + TikTok' : platform}
+${extra ? `Additional context: ${extra}` : ''}
+
+${langInstr[lang]}
+
+${activeType === 'video_script'
+  ? 'Format as a speaking script. Use [brackets] for stage directions. Include natural pauses and emphasis.'
+  : 'Include the caption text + 3–5 relevant hashtags at the end (mix Thai and English hashtags if bilingual).'
+}
+
+Be authentic to Fah. Real, warm, never salesy.`;
+
+  try {
+    let text = '';
+
+    // Try Vercel serverless function first (production team deployment)
+    let useServer = false;
+    try {
+      const probe = await fetch('/api/generate', { method: 'HEAD' });
+      useServer = (probe.status !== 404);
+    } catch(_) {}
+
+    if (useServer) {
+      const r = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ system: sys, user: usr })
+      });
+      const d = await r.json();
+      text = d.content || d.text || 'Server error — check /api/generate.js';
+
+    } else if (apiKey) {
+      const r = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01'
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-6',
+          max_tokens: 1000,
+          system: sys,
+          messages: [{ role: 'user', content: usr }]
+        })
+      });
+      const d = await r.json();
+      text = d.content?.[0]?.text || 'API error — check your key in Settings.';
+
+    } else {
+      box.innerHTML = `<p class="out-ph">⚙ No API key found.<br>Go to <strong>Settings</strong> and add your Anthropic API key, or deploy to Vercel with ANTHROPIC_API_KEY set.</p>`;
+      btn.disabled = false; btn.textContent = '✦ Generate Content for Fah';
+      return;
+    }
+
+    box.innerHTML = `<div class="out-txt">${esc(text)}</div>`;
+    document.getElementById('outActs').style.display = 'flex';
+
+  } catch(err) {
+    box.innerHTML = `<p class="out-ph" style="color:var(--red);">Error: ${err.message}</p>`;
+  }
+
+  btn.disabled = false; btn.textContent = '✦ Generate Content for Fah';
+}
+
+function copyOut() {
+  const t = document.querySelector('.out-txt')?.innerText;
+  if (t) { navigator.clipboard.writeText(t); toast('Copied ✓'); }
+}
+
+function esc(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+}
+
+// ── API KEY ─────────────────────────────────
+function saveKey() {
+  const k = document.getElementById('apiInput').value.trim();
+  if (!k) return;
+  localStorage.setItem('rf_api_key', k);
+  checkKey();
+  toast('API key saved ✓');
+}
+
+function checkKey() {
+  const k = localStorage.getItem('rf_api_key');
+  const dot = document.getElementById('statusDot');
+  const txt = document.getElementById('statusTxt');
+  if (k) {
+    dot.classList.add('ok');
+    txt.textContent = 'API key configured — ready to generate';
+    document.getElementById('apiInput').value = k.slice(0,12) + '••••••••';
+  }
+}
+checkKey();
+
+// ── TOAST ────────────────────────────────────
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2500);
+}
+</script>
+</body>
+</html>
